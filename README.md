@@ -14,10 +14,13 @@ grades_bucket
 
 functions files (voca_practice.py) contains those functions:
 1. check_existing_files_or_create_them
+
   1.1 check_existing_files_or_create_them
 2.validation_before_practice
+
   2.1 check_if_txt_bucket_exist
   2.2 at_least_five_words_in_bucket
 3. practice_word
+
 4. user_answer
   4.1 update_degree
