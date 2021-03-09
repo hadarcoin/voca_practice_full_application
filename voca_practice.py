@@ -75,7 +75,7 @@ def at_least_five_words_in_bucket():
     if english_bucket == []:
         return "empty bucket"
     # validation - check at least 5 words
-    elif len(english_bucket[0].split(',')) < 5:
+    elif len(english_bucket[0].split(',')) <= 5:
         return "less than five words"
     else:
         return "im ok"
