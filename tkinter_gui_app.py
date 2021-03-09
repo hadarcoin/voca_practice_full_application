@@ -15,7 +15,6 @@ high_dpi()
 COLOR_PRIMARY = '#2e3f4f'
 COLOR_SECONDARY = '#293846'
 COLOR_LIGHT_BACKGROUND = 'DeepSkyBlue3'
-#SlateBlue3
 COLOR_LIGHT_TEXT = '#eee'
 COLOR_DARK_TEXT = '#8095a8'
 
@@ -62,14 +61,10 @@ class MainVocaPractice(tk.Tk):
             self.frames[Practice].suffle_words()
         if frame == self.frames[AddWords]:
             self.frames[AddWords].delete_existing()
-        #if frame == self.frames[Menu]:
-        #    #validation_before_practice()
-        #    message = validation_before_practice()
-        #    if message == 'im ok':
-        #        pass
-        #    else:
-        #        self.frames[Menu].switch_page_button_to_practice['state'] = "disabled"
-        #        self.frames[Menu].message_label_variable.set('Please add at least 5 words before practice!')
+            self.frames[Menu].refresh_bucket_after_adding_words()
+        if frame == self.frames[Menu]:
+            self.frames[Menu].refresh_bucket_after_adding_words()
+
 
 
 class Menu(ttk.Frame):
@@ -97,6 +92,7 @@ class Menu(ttk.Frame):
         message_label = ttk.Label(self, textvariable=self.message_label_variable, font=explainfont, foreground='red', background='DeepSkyBlue3')
         switch_page_button_to_add_words = ttk.Button(self, text='Add words', style='TButton',width=45,
                                         command=lambda: controller.show_frame(AddWords))
+        global switch_page_button_to_practice
         switch_page_button_to_practice = ttk.Button(self, text='Practice',width=45,
                                         command=lambda: controller.show_frame(Practice))
 
@@ -111,22 +107,14 @@ class Menu(ttk.Frame):
             child.grid_configure(padx=15, pady=15)
 
 
+    def refresh_bucket_after_adding_words(self):
         message = validation_before_practice()
         if message == 'im ok':
-            pass
+            self.message_label_variable.set('')
+            switch_page_button_to_practice['state'] = "enable"
         else:
             switch_page_button_to_practice['state'] = "disabled"
             self.message_label_variable.set('Please add at least 5 words before practice!')
-
-   #def refresh_validation_message(self):
-   #    message = validation_before_practice()
-   #    if message == 'im ok':
-   #        pass
-   #    else:
-   #        self.switch_page_button_to_practice['state'] = "disabled"
-   #        self.message_label_variable.set('Please add at least 5 words before practice!')
-
-
 
 
 class Practice(ttk.Frame):
@@ -252,7 +240,7 @@ class AddWords(ttk.Frame):
         enter_english = ttk.Entry(self, textvariable=self.english_user_input, style="EntryStyle.TEntry")
         hebrew_label = ttk.Label(self, text='Hebrew word:', style="BW.TLabel")
         enter_hebrew = ttk.Entry(self, textvariable=self.hebrew_user_input, style="EntryStyle.TEntry")
-
+        global print_label
         print_label = ttk.Label(self, textvariable=self.print_message, style="BW.TLabel", foreground='white')
 
         insert_button = ttk.Button(self, text='Submit', command=self.insert, width=45,)
@@ -282,30 +270,27 @@ class AddWords(ttk.Frame):
         return result_english, result_hebrew
 
 
-    def insert(self, *args, **kwargs):
+    def insert(self):
         e_word = self.english_user_input.get()
         h_word = self.hebrew_user_input.get()
 
         result_e, result_h = self.checker_words_language(e_word, h_word)
         if result_e == 'im ok' and result_h == 'im ok':
+            print_label.configure(foreground='white')
             add_words_to_buckets(e_word, h_word)
             self.print_message.set(f'{e_word} : {h_word} are added!')
             self.english_user_input.set("")
             self.hebrew_user_input.set("")
         else:
-            #self.change_color_label()
-            #want to change color to red
+            print_label.configure(foreground='red')
             if result_e == 'im ok' and result_h != 'im ok':
                 self.print_message.set('Please correct your Hebrew word!')
             elif result_e != 'im ok' and result_h == 'im ok':
                 self.print_message.set('Please correct your English word!')
 
 
-    def delete_existing(self, *args):
+    def delete_existing(self):
         self.print_message.set("")
-
-
-
 
 
 root = MainVocaPractice()
